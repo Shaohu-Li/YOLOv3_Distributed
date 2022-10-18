@@ -2,6 +2,8 @@
 
 对应的博客说明链接：https://blog.csdn.net/To_be_little/article/details/126130928?spm=1001.2014.3001.5501
 
+​		代码在之前的版本上，实现了 pytorch 上 分布式 多gpu 训练，选用了目前 pytorch 推荐的 DDP 分布式模式。
+
 ## 1、首先安装相关的依赖包，根据requirements.txt
 &emsp;&emsp;安装包的版本不一定需要一模一样，存在相应安装包就行，当运行的时候报错，再更改版本，没必要将自己搭配好的环境进行大修大改
 
@@ -33,12 +35,25 @@ IMG_DIR                 = DATASET + "/images/"
 TRAIN_LABEL_DIR         = DATASET + "/Annotations/"
 VAL_LABEL_DIR           = DATASET + "/Annotations/"
 ```
-## 4、运行 train.py 进行训练即可
+## 4、运行 begin_train.sh 进行训练即可
+
 &emsp;&emsp; 1、出现 gpu 内存不足，可以调整batch_size的大小，也在config.py中
 
 &emsp;&emsp; 2、出现 albumentations的版本问题，可以提升一下版本
 
+​		 3、我是在 Ubuntu 上在 直接运行 .sh 是可以运行的。如果不行，将 .sh 中的运行代码拷贝到终端中进行运行即可。
+
+```python
+# 先激活你的终端环境
+torchrun --nnodes=1 --standalone --nproc_per_node=2 train.py
+# 或者
+CUDA_VISLBLE_DEVICES=0,1 python -m torch.distributed.launch  --nproc_per_node=2 train.py
+```
+
+实践证明，使用 pytorch 最新的 torchrun 命令好像运行的更快一点，不知道是不是错觉，具体的上面两个命令的解释可以查看pytorch的[官方文档](https://pytorch.org/docs/stable/elastic/run.html)；
+
 ## 5、参考：
+
 https://github.com/bubbliiiing/yolo3-pytorch
 
 https://youtu.be/YDkjWEN8jNA
